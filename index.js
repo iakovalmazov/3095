@@ -5,6 +5,7 @@ const path = require('path')
 const app = express()
 
 app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
 app.get('/', (req, res) => {
@@ -20,6 +21,7 @@ app.get('/', (req, res) => {
   <body>
     <h1>Лучшая в мире команда?</h1>
     <div id="main"></div>
+    <button id="vote" style="display:none">Голосовать</button>
     <button id="variants">Показать кандидатов</button>
     <button id="stat">Показать результат</button>
     <script src="app.js"></script>
@@ -40,7 +42,6 @@ app.get('/stat', async (req, res) => {
 
 app.post('/vote', async (req, res) => {
   await addData(req.body.variants)
-  res.redirect('/')
 })
 
 async function getData(fileName) {
@@ -62,7 +63,9 @@ async function getData(fileName) {
 async function addData(id) {
   const stat = await getData('stat.json')
   const variant = stat.find(c => c.id == id)
-  variant.count ++
+  if(variant) {
+    variant.count ++
+  }
   return new Promise((resolve, reject) => {
     fs.writeFile(
       path.join(__dirname, 'data', 'stat.json'),
