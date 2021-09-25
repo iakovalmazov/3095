@@ -21,9 +21,7 @@ app.get('/', (req, res) => {
   <body>
     <h1>Лучшая в мире команда?</h1>
     <div id="main"></div>
-    <button id="vote" style="display:none">Голосовать</button>
-    <button id="variants">Показать кандидатов</button>
-    <button id="stat">Показать результат</button>
+    <button id="vote">Голосовать</button>
     <script src="app.js"></script>
   </body>
   </html>
@@ -42,6 +40,8 @@ app.get('/stat', async (req, res) => {
 
 app.post('/vote', async (req, res) => {
   await addData(req.body.variants)
+  const stat  = await getData('stat.json')
+  res.send(stat)
 })
 
 async function getData(fileName) {

@@ -1,10 +1,9 @@
-variants.onclick = async function () {
+async function getVariants() {
   let response = await fetch('/variants')
   let content = await response.json()
   
   let text = ''
   let main = document.querySelector('#main')
-  document.getElementById('vote').style.display='block'
 
   for(let key in content) {
     text += `
@@ -19,10 +18,15 @@ variants.onclick = async function () {
   main.innerHTML = text 
 }
 
-stat.onclick = async function() {
-  let response = await fetch('/stat')
+vote.onclick = async function() {
+  let variantsRadio = document.querySelector("input[name=variants]:checked")
+  let variantsValue = variantsRadio ? variantsRadio.value : ''
+  let response = await fetch('/vote', {
+    method: 'POST',
+    headers: {'Content-type': 'application/json'},
+    body: JSON.stringify({variants: variantsValue})
+  })
   let content = await response.json()
-  
   let text = ''
   let main = document.querySelector('#main')
 
@@ -32,16 +36,9 @@ stat.onclick = async function() {
   `
   }
   main.innerHTML = text
+  document.getElementById('vote').style.display='none'
 }
 
-vote.onclick = async function() {
-  let variantsRadio = document.querySelector("input[name=variants]:checked")
-  let variantsValue = variantsRadio ? variantsRadio.value : ''
-  await fetch('/vote', {
-    method: 'POST',
-    headers: {'Content-type': 'application/json'},
-    body: JSON.stringify({variants: variantsValue})
-  })
-}
+getVariants()
 
  
